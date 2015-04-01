@@ -3,7 +3,7 @@
 A collection of Myo scripts created for various purposes.
 
 ##How to use:
-1. Download the .myo file and double click it to install into Myo Connect ([myo.com/start](myo.com/start)). 
+1. Download the .myo file and double click it to install into Myo Connect ([myo.com/start](https://myo.com/start)). 
 
 ##Connectors
 
