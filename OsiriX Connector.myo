@@ -1,0 +1,133 @@
+scriptId = 'com.dynamix.osirix'
+minMyoConnectVersion = '0.7.0'
+scriptDetailsUrl = 'https://github.com/smngreenberg/myo-connectors'
+scriptTitle = 'OsiriX Connector'
+
+
+-- Mappings
+-- Wave Left: Previous Image
+-- Wave Right: Next Image
+-- Finger Spread: Next Image Series
+-- Fist: Previous Image Series
+
+-- Effects
+
+function nextImage()
+    myo.keyboard("right_arrow", "press")
+end
+
+function previousImage()
+    myo.keyboard("left_arrow", "press")
+end
+
+function nextImageSeries()
+    myo.keyboard("right_arrow", "press", "command")
+end
+
+function previousImageSeries()
+    myo.keyboard("left_arrow", "press", "command")
+end
+
+-- Helpers
+
+function conditionallySwapWave(pose)
+    if myo.getArm() == "left" then
+        if pose == "waveIn" then
+            pose = "waveOut"
+        elseif pose == "waveOut" then
+            pose = "waveIn"
+        end
+    end
+    return pose
+end
+
+function getMyoRollDegrees()
+    local rollValue = math.deg(myo.getRoll())
+    return rollValue
+end
+
+function degreeDiff(value, base)
+    local diff = value - base
+
+    if diff > 180 then
+        diff = diff - 360
+    elseif diff < -180 then
+        diff = diff + 360
+    end
+
+    return diff
+end
+
+-- Triggers
+
+function onPoseEdge(pose, edge)
+     if pose == "waveIn" or pose == "waveOut" then
+        if edge == "on" then
+            pose = conditionallySwapWave(pose)
+            if pose == "waveIn" then
+                -- wave left
+                previousImage()
+            else
+                -- wave right
+                nextImage()
+            end
+            myo.notifyUserAction()
+        end
+        -- Extend unlock
+        myo.unlock("timed")
+    end
+    -- fast image switching
+    if pose == "fist" then
+        local now = myo.getTimeMilliseconds()
+        scrollActive = edge == "on"
+        rollReference = getMyoRollDegrees()
+        scrollSince = now
+        myo.unlock(edge == "on" and "hold" or "timed")
+        myo.notifyUserAction()
+    end
+end
+
+FAST_SCROLL_THRESHOLD = 34 -- degrees
+FAST_SCROLL_PERIOD = 100
+
+SLOW_SCROLL_THRESHOLD = 11.5 -- degrees
+SLOW_SCROLL_PERIOD = 330
+
+function onPeriodic()
+    local now = myo.getTimeMilliseconds()
+
+    if scrollActive then
+        local relativeRoll = degreeDiff(getMyoRollDegrees(), rollReference)
+        if math.abs(relativeRoll) > FAST_SCROLL_THRESHOLD then
+            if now - scrollSince > FAST_SCROLL_PERIOD then
+                if relativeRoll > 0 then
+                    nextImage()
+                else
+                    previousImage()
+                end
+                scrollSince = now
+            end
+        elseif math.abs(relativeRoll) > SLOW_SCROLL_THRESHOLD then
+            if now - scrollSince > SLOW_SCROLL_PERIOD then
+                if relativeRoll > 0 then
+                    nextImage()
+                else
+                    previousImage()
+                end
+                scrollSince = now
+            end
+        end
+    end
+end
+
+function onForegroundWindowChange(app, title)
+    if platform == "MacOS" then
+        if (app == "com.rossetantoine.osirix")  then
+            return true
+        end
+    end
+end
+
+function activeAppName()
+    return "OsiriX"
+end
