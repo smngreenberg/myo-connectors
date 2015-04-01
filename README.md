@@ -7,7 +7,7 @@ A collection of Myo scripts created for various purposes.
 
 ##Connectors
 
-###OsirisX Connector
+###OsiriX Connector
 Connector for [OsiriX](http://www.osirix-viewer.com/). Control scheme:
 
 |Myo Pose       | OsiriX Command              |
