@@ -1,6 +1,6 @@
 scriptId = 'com.dynamix.osirix'
 minMyoConnectVersion = '0.7.0'
-scriptDetailsUrl = 'https://github.com/smngreenberg/myo-connectors'
+scriptDetailsUrl = 'https://market.myo.com/app/55438d11e4b08aa39fd67675'
 scriptTitle = 'OsiriX Connector'
 
 
