@@ -7,8 +7,7 @@ scriptTitle = 'OsiriX Connector'
 -- Mappings
 -- Wave Left: Previous Image
 -- Wave Right: Next Image
--- Finger Spread: Next Image Series
--- Fist: Previous Image Series
+-- Fist: Hold and rotate to fast-scroll through images
 
 -- Effects
 
