@@ -1,0 +1,94 @@
+scriptId = 'com.chrisgoodine.dynamix.solidworks'
+minMyoConnectVersion ='0.8.0'
+scriptDetailsUrl = 'https://market.myo.com/app/5582dc8de4b03c7d53a81c0d/'
+scriptTitle = 'SolidWorks Connector'
+
+--Commands
+--fist rotate
+--waveRight zoom
+--fingersSpread pan
+--waveLeft isometric view
+--doubleTap to toggle unlock and engage mouse control"
+
+--Helper Functions
+function conditionallySwapWave(pose)
+    if myo.getArm() == "left" then
+        if pose == "waveIn" then
+            pose = "waveOut"
+        elseif pose == "waveOut" then
+            pose = "waveIn"
+        end
+    end
+    return pose
+end
+
+-- Locking Functions
+-- Set how the Myo Armband handles locking
+myo.setLockingPolicy("none")
+
+function onLock()
+    myo.controlMouse(false)
+end
+
+function onUnlock()
+    myo.controlMouse(true)
+end
+
+function unLatch()
+    myo.mouse("center","up")
+    myo.mouse("center","up","shift")
+    myo.mouse("center","up","control")
+end
+
+function onPoseEdge(pose, edge)
+    local now = myo.getTimeMilliseconds()
+    
+    pose = conditionallySwapWave(pose)
+    if pose == "doubleTap" and edge == "on" then
+        if myo.isUnlocked() then
+            myo.lock()
+        else
+            myo.unlock("hold") 
+        end  
+    end
+    if edge == "on" and  myo.isUnlocked() then
+        if pose == "fist" and enabled then -- Rotate
+            myo.mouse("center","down")
+        elseif pose == "waveOut" and enabled then -- Zoom
+            myo.mouse("center","down","shift")
+        elseif pose == "fingersSpread" and enabled then -- Pan
+            myo.mouse("center","down","control")
+        elseif pose == "waveIn" and enabled  then -- Isometric
+            myo.keyboard("7", "press","control")
+        end
+    elseif edge == "off" then
+        unLatch()
+    end
+end
+
+-- onPeriodic runs every ~10ms
+function onPeriodic()
+    --empty
+end
+
+--When window becomes active and releases activation
+function onActiveChange(isActive)
+    if isActive then
+        enabled = true
+    else
+        enabled = false
+        myo.controlMouse(false)
+        unLatch()
+    end 
+end
+
+-- Only activate when using SolidWorks
+function onForegroundWindowChange(app, title)
+    if (app == "SLDWORKS.exe") then
+        return true
+    end
+end
+
+function activeAppName()
+    return "SolidWorks"
+end
