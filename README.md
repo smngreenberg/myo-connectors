@@ -15,3 +15,14 @@ Connector for [OsiriX](http://www.osirix-viewer.com/). Control scheme:
 |Wave Right     | Previous Image              |
 |Wave Left      | Next Image                  |
 |Fist + Rotate  | Fast scroll through images  |
+
+###SolidWorks Connector
+Connector for [SolidWorks](http://www.solidworks.com/). Control scheme:
+
+|Myo Pose       | SolidWorks Command          |
+|---------------|-----------------------------|
+|Double Tap     | Unlock and control mouse    |
+|Fist           | Rotate                      |
+|Wave Left      | Change to Isometric View    |
+|Wave Right     | Zoom                        |
+|Finger Spread  | Pan                         |
